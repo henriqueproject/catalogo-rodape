@@ -773,6 +773,13 @@ function visualizarOrcamento() {
 
   var urgenteRow = document.getElementById('orcUrgenteRow');
   if (urgenteRow) urgenteRow.style.display = 'flex';
+  var prazoSub = document.getElementById('prazSubtexto');
+  if (prazoSub) {
+    var textoUrgente = comInstalacao
+      ? 'Tem pressa? Use o botão <strong style="color:#e63946;">URGENTE</strong> abaixo para prioridade na entrega, e instalação.'
+      : 'Tem pressa? Use o botão <strong style="color:#e63946;">URGENTE</strong> abaixo para prioridade na entrega.';
+    prazoSub.innerHTML = textoUrgente;
+  }
 
   document.getElementById('orcStep1').style.display = 'none';
   document.getElementById('orcStep2').style.display = 'flex';
