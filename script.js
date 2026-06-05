@@ -419,14 +419,20 @@ var silPu40Ativo = true;
 ───────────────────────────────────── */
 var precoInstalacao = {
   '3': 11.99, '5': 11.99, '7': 11.99, '10': 11.99, '12': 11.99,
-  '15': 17.99, '20': 21.99, 'sobrepor': 16.99
+  '15': 13.99, '20': 18.99, 'sobrepor': 13.99
 };
+var MIN_MAO_DE_OBRA = 350.00;
 
 function getAlturaPrecoInst(detalhe) {
   var m = detalhe.match(/^(\d+)cm/i);
   if (m) { return precoInstalacao[m[1]] || 11.99; }
   if (/sobrepor/i.test(detalhe)) { return precoInstalacao['sobrepor']; }
   return 11.99;
+}
+
+function calcularValorInst(metrosComprar, precoInst) {
+  var valorCalculado = metrosComprar * precoInst;
+  return Math.max(valorCalculado, MIN_MAO_DE_OBRA);
 }
 
 /* ─────────────────────────────────────
@@ -670,7 +676,8 @@ function visualizarOrcamento() {
   var valSilPu40 = qtdSilPu40 * 21.99;
 
   var precoInst = getAlturaPrecoInst(orcProduto.detalhe);
-  var valorInst = comInstalacao ? metrosComprar * precoInst : 0;
+  var valorInst = comInstalacao ? calcularValorInst(metrosComprar, precoInst) : 0;
+  var instMinimo = comInstalacao && (metrosComprar * precoInst) < MIN_MAO_DE_OBRA;
 
   var valorRem = valorRemocao > 0 ? metrosComprar * valorRemocao : 0;
   var descRem = valorRemocao === 3.50 ? 'Remoção Rodapé MDF' : 'Remoção Rodapé Cerâmica';
@@ -701,7 +708,10 @@ function visualizarOrcamento() {
   linhas += '<div class="orc-mapa-title">Orçamento Decorcom</div>';
   linhas += '<div class="orc-mapa-linha"><span class="desc">' + fmtN(metrosComprar) + 'm ' + orcProduto.nome + ' ' + orcProduto.detalhe + '</span><span class="val">' + fmt(valorProdutos) + '</span></div>';
   if (comInstalacao) {
-    linhas += '<div class="orc-mapa-linha"><span class="desc">' + fmtN(metrosComprar) + 'm Mão de Obra R$' + fmtN(precoInst) + '/m</span><span class="val">' + fmt(valorInst) + '</span></div>';
+    var descInst = instMinimo
+      ? 'Mão de Obra — taxa mínima'
+      : fmtN(metrosComprar) + 'm Mão de Obra R$' + fmtN(precoInst) + '/m';
+    linhas += '<div class="orc-mapa-linha"><span class="desc">' + descInst + '</span><span class="val">' + fmt(valorInst) + '</span></div>';
   }
   if (valorRemocao > 0) {
     linhas += '<div class="orc-mapa-linha"><span class="desc">' + fmtN(metrosComprar) + 'm ' + descRem + ' R$' + fmtN(valorRemocao) + '/m</span><span class="val">' + fmt(valorRem) + '</span></div>';
@@ -791,7 +801,10 @@ function gerarContrato() {
     fmtN(orcDados.metrosComprar) + 'm = ' + orcDados.qtdBarras + ' barras',
     'Valor produto: ' + fmt(orcDados.valorProdutos)
   ];
-  if (comInstalacao) linhasMsg.push('Mao de obra: ' + fmt(orcDados.valorInst));
+  if (comInstalacao) {
+    var instMinimoMsg = (orcDados.metrosComprar * orcDados.precoInst) < MIN_MAO_DE_OBRA;
+    linhasMsg.push('Mao de obra' + (instMinimoMsg ? ' (taxa minima)' : '') + ': ' + fmt(orcDados.valorInst));
+  }
   if (orcDados.qtdAndaresSalvo > 0) linhasMsg.push('Mao de obra escada (' + orcDados.qtdAndaresSalvo + ' andares): ' + fmt(orcDados.valorEscada));
   if (valorRemocao > 0) linhasMsg.push(orcDados.descRem + ': ' + fmt(orcDados.valorRem));
   linhasMsg.push(orcDados.qtdSilBranco + 'x Silicone Branco: ' + fmt(orcDados.valSilBranco));
