@@ -412,6 +412,8 @@ var PRECO_ESCADA = 520.00;
 var orcDados = {};
 var silBrancoAtivo = true;
 var silPu40Ativo = true;
+var remocaoAtivo = true;
+var silBrancoDisponivel = true; // false para produtos Preto e Cinza
 
 // Preço instalação por altura
 /* ─────────────────────────────────────
@@ -469,11 +471,17 @@ function toggleSilicone(tipo) {
   recalcularMapa();
 }
 
+function toggleRemocao() {
+  remocaoAtivo = !remocaoAtivo;
+  recalcularMapa();
+}
+
 function recalcularMapa() {
   var d = orcDados;
   var valSilBranco = silBrancoAtivo ? d.valSilBranco : 0;
   var valSilPu40   = silPu40Ativo   ? d.valSilPu40   : 0;
-  var subtotal = d.valorProdutos + d.valorInst + d.valorRem + valSilBranco + valSilPu40 + d.valorEscada + d.entrega;
+  var valRem       = remocaoAtivo   ? d.valorRem     : 0;
+  var subtotal = d.valorProdutos + d.valorInst + valRem + valSilBranco + valSilPu40 + d.valorEscada + d.entrega;
   var parcela5x  = (subtotal * 1.11) / 5;
   var parcela10x = (subtotal * 1.11) / 10;
   orcDados.subtotal   = subtotal;
@@ -483,6 +491,10 @@ function recalcularMapa() {
   // Re-renderiza linhas de silicone
   var linhas = document.getElementById('orcMapa');
   if (!linhas) return;
+
+  // Atualiza linha de remoção
+  var remEl = linhas.querySelector('[data-rem]');
+  if (remEl) remEl.outerHTML = renderLinhaRemocao(d.metrosComprar, d.descRem, d.valorRem);
 
   // Atualiza só as linhas de silicone (por data-sil)
   var silBrancoEl = linhas.querySelector('[data-sil="branco"]');
@@ -507,8 +519,27 @@ function recalcularMapa() {
   }
 }
 
+function renderLinhaRemocao(metros, desc, val) {
+  var label = fmtN(metros) + 'm ' + desc + ' R$' + fmtN(valorRemocao) + '/m';
+  if (remocaoAtivo) {
+    return '<div class="orc-mapa-linha" data-rem="1">'
+      + '<span class="desc">' + label + '</span>'
+      + '<span class="orc-sil-actions">'
+      + '<span class="val">' + fmt(val) + '</span>'
+      + '<button class="orc-sil-btn orc-sil-del" onclick="toggleRemocao()" title="Remover">🗑</button>'
+      + '</span></div>';
+  } else {
+    return '<div class="orc-mapa-linha orc-mapa-linha-removida" data-rem="1">'
+      + '<span class="desc orc-sil-removido">' + label + ' <em>(removido)</em></span>'
+      + '<span class="orc-sil-actions">'
+      + '<button class="orc-sil-btn orc-sil-add" onclick="toggleRemocao()" title="Restaurar">↩</button>'
+      + '</span></div>';
+  }
+}
+
 // Versão com data-sil attribute para poder localizar e substituir no DOM
 function renderLinhaSiliconeTagged(tipo, qtd, val) {
+  if (tipo === 'branco' && !silBrancoDisponivel) return '';
   var ativo = tipo === 'branco' ? silBrancoAtivo : silPu40Ativo;
   var label = tipo === 'branco'
     ? qtd + 'x Silicone Branco R$19,99'
@@ -545,8 +576,10 @@ function abrirOrcamento(btn) {
   var detalhe = card.querySelector('.card-detalhe') ? card.querySelector('.card-detalhe').textContent : '';
   var preco = btn.getAttribute('data-preco');
   var alt = card.querySelector('img') ? card.querySelector('img').alt : '';
-  silBrancoAtivo = true;
+  silBrancoDisponivel = !/preto|cinza/i.test(nome);
+  silBrancoAtivo = silBrancoDisponivel;
   silPu40Ativo = true;
+  remocaoAtivo = true;
   orcProduto = {nome: nome, detalhe: detalhe, preco: preco, alt: alt};
   document.getElementById('orcProdutoNome').textContent = nome;
   document.getElementById('orcProdutoDetalhe').textContent = detalhe;
@@ -560,7 +593,7 @@ function abrirOrcamento(btn) {
   document.getElementById('btnRemNao').classList.add('ativo');
   document.getElementById('btnRemMdf').classList.remove('ativo');
   document.getElementById('btnRemCer').classList.remove('ativo');
-  document.getElementById('orcHeaderTitle').textContent = 'Solicitar Orcamento';
+  document.getElementById('orcHeaderTitle').textContent = 'Solicitar Orçamento';
   document.getElementById('orcHeaderSub').textContent = 'Calcule sua necessidade';
   comInstalacao = false;
   valorRemocao = 0;
@@ -670,7 +703,7 @@ function visualizarOrcamento() {
   var precoPorMetro = parseFloat(precoStr);
   var valorProdutos = metrosComprar * precoPorMetro;
 
-  var qtdSilBranco = Math.ceil(metrosComprar / 20);
+  var qtdSilBranco = silBrancoDisponivel ? Math.ceil(metrosComprar / 20) : 0;
   var qtdSilPu40 = Math.ceil(metrosComprar / 15);
   var valSilBranco = qtdSilBranco * 19.99;
   var valSilPu40 = qtdSilPu40 * 21.99;
@@ -714,7 +747,7 @@ function visualizarOrcamento() {
     linhas += '<div class="orc-mapa-linha"><span class="desc">' + descInst + '</span><span class="val">' + fmt(valorInst) + '</span></div>';
   }
   if (valorRemocao > 0) {
-    linhas += '<div class="orc-mapa-linha"><span class="desc">' + fmtN(metrosComprar) + 'm ' + descRem + ' R$' + fmtN(valorRemocao) + '/m</span><span class="val">' + fmt(valorRem) + '</span></div>';
+    linhas += renderLinhaRemocao(metrosComprar, descRem, valorRem);
   }
   if (temEscada && valorEscada > 0) {
     linhas += '<div class="orc-mapa-linha"><span class="desc">' + qtdAndares + 'x Mão de obra escada R$520,00</span><span class="val">' + fmt(valorEscada) + '</span></div>';
@@ -744,7 +777,7 @@ function visualizarOrcamento() {
 
   document.getElementById('orcStep1').style.display = 'none';
   document.getElementById('orcStep2').style.display = 'flex';
-  document.getElementById('orcHeaderTitle').textContent = 'Revisao do Orcamento';
+  document.getElementById('orcHeaderTitle').textContent = 'Revisão do Orçamento';
   // data no hero
   var d = new Date();
   var dataStr = d.toLocaleDateString('pt-BR', {day:'2-digit',month:'2-digit',year:'numeric'});
@@ -756,7 +789,7 @@ function visualizarOrcamento() {
 function voltarStep1() {
   document.getElementById('orcStep1').style.display = 'flex';
   document.getElementById('orcStep2').style.display = 'none';
-  document.getElementById('orcHeaderTitle').textContent = 'Solicitar Orcamento';
+  document.getElementById('orcHeaderTitle').textContent = 'Solicitar Orçamento';
   document.getElementById('orcHeaderSub').textContent = 'Calcule sua necessidade';
 }
 
@@ -806,8 +839,8 @@ function gerarContrato() {
     linhasMsg.push('Mao de obra' + (instMinimoMsg ? ' (taxa minima)' : '') + ': ' + fmt(orcDados.valorInst));
   }
   if (orcDados.qtdAndaresSalvo > 0) linhasMsg.push('Mao de obra escada (' + orcDados.qtdAndaresSalvo + ' andares): ' + fmt(orcDados.valorEscada));
-  if (valorRemocao > 0) linhasMsg.push(orcDados.descRem + ': ' + fmt(orcDados.valorRem));
-  linhasMsg.push(orcDados.qtdSilBranco + 'x Silicone Branco: ' + fmt(orcDados.valSilBranco));
+  if (valorRemocao > 0 && remocaoAtivo) linhasMsg.push(orcDados.descRem + ': ' + fmt(orcDados.valorRem));
+  if (silBrancoDisponivel) linhasMsg.push(orcDados.qtdSilBranco + 'x Silicone Branco: ' + fmt(orcDados.valSilBranco));
   linhasMsg.push(orcDados.qtdSilPu40 + 'x Silicone PU40: ' + fmt(orcDados.valSilPu40));
   linhasMsg.push('Entrega: ' + fmt(orcDados.entrega));
   linhasMsg.push('TOTAL PIX: ' + fmt(orcDados.subtotal));
