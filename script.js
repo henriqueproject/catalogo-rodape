@@ -508,6 +508,14 @@ function renderLinhaSiliconeTagged(tipo, qtd, val) {
     ? qtd + 'x Silicone Branco R$19,99'
     : qtd + 'x Silicone PU40 (Cola) R$21,99';
 
+  // Com instalação: sem opção de remover — silicones são obrigatórios
+  if (comInstalacao) {
+    return '<div class="orc-mapa-linha" data-sil="' + tipo + '">'
+      + '<span class="desc">' + label + '</span>'
+      + '<span class="val">' + fmt(val) + '</span>'
+      + '</div>';
+  }
+
   if (ativo) {
     return '<div class="orc-mapa-linha" data-sil="' + tipo + '">'
       + '<span class="desc">' + label + '</span>'
@@ -719,6 +727,10 @@ function visualizarOrcamento() {
   document.getElementById('confEndereco').value = endereco;
   document.getElementById('confTelefone').value = telefone;
   document.getElementById('confCpf').value = '';
+
+  // URGENTE só aparece para "Só o produto" (sem instalação)
+  var urgenteRow = document.getElementById('orcUrgenteRow');
+  if (urgenteRow) urgenteRow.style.display = comInstalacao ? 'none' : 'flex';
 
   document.getElementById('orcStep1').style.display = 'none';
   document.getElementById('orcStep2').style.display = 'flex';

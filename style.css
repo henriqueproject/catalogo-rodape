@@ -547,8 +547,8 @@ footer p{font-size:12px;color:#555;margin-top:0.5rem;}
 .orc-sil-removido{text-decoration:line-through;color:#999;}
 .orc-sil-removido em{font-style:normal;font-size:10px;}
 /* FAIXA CONFIRMAÇÃO */
-.orc-confirm-faixa{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff8e1;border-radius:8px;padding:10px 14px;border-left:3px solid #f0c040;}
-.orc-confirm-faixa span{font-size:12px;color:#888;flex:1;}
+.orc-confirm-faixa{background:#fff8e1;border-radius:8px;padding:10px 14px;border-left:3px solid #f0c040;}
+.orc-confirm-faixa span{font-size:12px;color:#888;display:block;}
 .btn-salvar-orc{background:#327fa4;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;}
 .btn-salvar-orc:hover{background:#2567a8;}
 
