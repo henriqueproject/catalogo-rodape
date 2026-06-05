@@ -771,9 +771,8 @@ function visualizarOrcamento() {
   document.getElementById('confTelefone').value = telefone;
   document.getElementById('confCpf').value = '';
 
-  // URGENTE só aparece para "Só o produto" (sem instalação)
   var urgenteRow = document.getElementById('orcUrgenteRow');
-  if (urgenteRow) urgenteRow.style.display = comInstalacao ? 'none' : 'flex';
+  if (urgenteRow) urgenteRow.style.display = 'flex';
 
   document.getElementById('orcStep1').style.display = 'none';
   document.getElementById('orcStep2').style.display = 'flex';
