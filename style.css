@@ -58,7 +58,7 @@ body{font-family:'DM Sans',sans-serif;background:#f7f6f3;color:#1a1a1a;}
 .nav-wrap{background:#fff;border-bottom:0.5px solid #e8e5df;border-top:0.5px solid #e8e5df;position:sticky;top:0;z-index:100;margin-top:20px;}
 .nav{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;max-width:1100px;margin:0 auto;justify-content:center;}
 .nav::-webkit-scrollbar{display:none;}
-.nav a{flex-shrink:0;font-size:11px;font-weight:500;padding:17px 20px;color:#888;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;border-bottom:2px solid transparent;transition:all 0.2s;}
+.nav a{flex-shrink:0;font-size:12px;font-weight:500;padding:20px 20px;color:#888;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;border-bottom:2px solid transparent;transition:all 0.2s;}
 .nav a:hover{color:#327fa4;}.nav a.active{color:#fff;background:#327fa4;border-radius:6px;border-bottom-color:transparent;}
 
 /* MAIN */
