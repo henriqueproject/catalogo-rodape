@@ -1374,17 +1374,29 @@
     </div>
 
     <!-- STEP 4: Revisão do contrato + aceite -->
-    <div class="orc-step2" id="orcStep4" style="display:none;flex-direction:column;gap:14px;">
-      <div class="orc-contrato-header">
-        <div class="orc-contrato-num">CONTRATO Nº <span id="prevNumContrato">—</span></div>
-        <div class="orc-contrato-sub">Revise as informações antes de prosseguir</div>
+    <div class="orc-step2" id="orcStep4" style="display:none;flex-direction:column;gap:0;padding:0;">
+
+      <!-- Banner clonado do orçamento -->
+      <div id="step4Banner"></div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;padding:16px;">
+
+      <!-- Barra do contrato -->
+      <div class="orc-contrato-barra">
+        CONTRATO &nbsp;&nbsp;<span id="prevNumContrato">—</span>
       </div>
 
-      <!-- Resumo financeiro -->
-      <div class="orc-contrato-box" id="prevResumo"></div>
+      <!-- Dados do cliente -->
+      <div class="orc-cliente-block" id="prevCliente"></div>
 
-      <!-- Datas -->
-      <div class="orc-contrato-datas" id="prevDatas"></div>
+      <!-- Resumo financeiro (clone do orcMapa) -->
+      <div class="orc-mapa" id="prevResumo" style="margin:0;"></div>
+
+      <!-- Formas de pagamento (clone do orcPagamentos) -->
+      <div class="orc-pagamentos" id="prevPagamentos" style="margin:0;"></div>
+
+      <!-- Prazo / datas -->
+      <div id="prevDatas"></div>
 
       <!-- Cláusulas colapsáveis -->
       <button class="orc-clausulas-toggle" onclick="toggleClausulas(this)">
@@ -1422,6 +1434,8 @@
         <button class="orc-submit" style="background:#888;flex:0 0 auto;width:auto;padding:14px 18px;" onclick="voltarParaCalendario()">← Voltar</button>
         <button class="orc-submit" id="btnIrPagamento" onclick="irParaPagamento()" disabled style="flex:1;">Ir para Pagamento →</button>
       </div>
+
+      </div><!-- /padding wrapper -->
     </div>
 
     <!-- STEP 5: Pagamento -->

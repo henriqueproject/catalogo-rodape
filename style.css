@@ -571,6 +571,10 @@ footer p{font-size:12px;color:#555;margin-top:0.5rem;}
 .orc-cal-obs{font-size:10.5px;color:#666;line-height:1.5;}
 
 /* ── STEP 4: REVISÃO DO CONTRATO ──────────────────── */
+.orc-contrato-barra{background:#1e3a64;color:#fff;text-align:center;padding:10px;font-size:14px;font-weight:700;letter-spacing:.12em;border-radius:8px;}
+.orc-cliente-block{background:#f7f6f3;border:1px solid #e8e5df;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:5px;}
+.orc-cliente-linha{display:flex;gap:8px;font-size:11.5px;color:#333;align-items:baseline;}
+.orc-cliente-linha strong{color:#555;font-weight:600;min-width:60px;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;}
 .orc-contrato-header{background:linear-gradient(135deg,#1e3a5f,#31654e);border-radius:10px;padding:16px;color:#fff;}
 .orc-contrato-num{font-size:15px;font-weight:700;letter-spacing:0.05em;}
 .orc-contrato-sub{font-size:11px;opacity:.75;margin-top:3px;}

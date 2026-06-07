@@ -1058,33 +1058,68 @@ function irParaRevisaoContrato() {
     diasInstalacao: diasInstalacaoNecessarios
   };
 
-  // Número do contrato
+  // ── Banner: clona o hero do orçamento ────────────
+  var heroBanner = document.getElementById('step4Banner');
+  var heroOriginal = document.getElementById('orcHeroHeader');
+  if (heroBanner && heroOriginal) {
+    heroBanner.innerHTML = heroOriginal.outerHTML;
+    // Remove o id do clone para não duplicar
+    var cloneHero = heroBanner.querySelector('.orc-hero-header');
+    if (cloneHero) cloneHero.removeAttribute('id');
+  }
+
+  // ── Número do contrato ────────────────────────────
   document.getElementById('prevNumContrato').textContent = numeroContratoGerado;
 
-  // Resumo financeiro (clona o mapa do orçamento)
-  var mapaEl = document.getElementById('orcMapa');
-  var resumo = document.getElementById('prevResumo');
-  resumo.innerHTML = mapaEl ? mapaEl.innerHTML : '';
+  // ── Dados do cliente ──────────────────────────────
+  var clienteEl = document.getElementById('prevCliente');
+  var dataAtual = new Date().toLocaleDateString('pt-BR');
+  clienteEl.innerHTML =
+    '<div class="orc-cliente-linha"><strong>Cliente</strong>' + nome + '</div>'
+  + '<div class="orc-cliente-linha"><strong>CPF/CNPJ</strong>' + cpf + '</div>'
+  + '<div class="orc-cliente-linha"><strong>Endereço</strong>' + endereco + '</div>'
+  + '<div class="orc-cliente-linha"><strong>Telefone</strong>' + telefone + '</div>'
+  + '<div class="orc-cliente-linha"><strong>Data</strong>' + dataAtual + '</div>';
 
-  // Datas
+  // ── Resumo financeiro (clone do orcMapa) ──────────
+  var mapaEl = document.getElementById('orcMapa');
+  document.getElementById('prevResumo').innerHTML = mapaEl ? mapaEl.innerHTML : '';
+
+  // ── Formas de pagamento (clone do orcPagamentos) ──
+  var pagEl = document.getElementById('orcPagamentos');
+  document.getElementById('prevPagamentos').innerHTML = pagEl ? pagEl.innerHTML : '';
+
+  // ── Prazo de entrega / instalação ─────────────────
   var datasEl = document.getElementById('prevDatas');
-  var urgClass = isUrgente ? ' urgente' : '';
-  var datasHtml = '<div class="orc-contrato-data-box' + urgClass + '">'
-    + '<div class="orc-contrato-data-label">Entrega</div>'
-    + '<div class="orc-contrato-data-val">' + dataEntregaTexto + '</div></div>';
+  var prazoSubTexto = comInstalacao
+    ? (isUrgente ? 'Urgente — vamos agilizar, entraremos em contato combinando.' : 'Vamos agilizar, entraremos em contato combinando.')
+    : (isUrgente ? 'Urgente — vamos agilizar, entraremos em contato combinando.' : '3h a 2 dias úteis — entraremos em contato combinando.');
+
+  var datasHtml = '<div class="orc-prazo" style="margin:0;">'
+    + '🚚 <strong>Prazo de entrega:</strong> 3 horas a 2 dias úteis — Curitiba e região metropolitana.'
+    + '<span style="display:block;margin-top:4px;font-size:10.5px;color:#555;">' + prazoSubTexto + '</span>'
+    + '</div>';
+
   if (dataInstTexto) {
-    var instRange = dataInstTexto + (dataInstFimTexto ? ' a ' + dataInstFimTexto : '');
-    datasHtml += '<div class="orc-contrato-data-box">'
-      + '<div class="orc-contrato-data-label">Instalação (prazo médio)</div>'
-      + '<div class="orc-contrato-data-val">' + instRange + '</div></div>';
+    var instRange = dataInstTexto + (dataInstFimTexto ? ' a ' + dataInstFimTexto + ' (' + diasInstalacaoNecessarios + ' dias)' : ' (1 dia)');
+    datasHtml += '<div class="orc-contrato-datas" style="margin-top:10px;">'
+      + '<div class="orc-contrato-data-box"><div class="orc-contrato-data-label">Instalação (prazo médio)</div>'
+      + '<div class="orc-contrato-data-val">' + instRange + '</div>'
+      + '<div style="font-size:9.5px;color:#888;margin-top:3px;">*Varia conforme acessibilidade e condições do imóvel</div></div>'
+      + '</div>';
   }
   datasEl.innerHTML = datasHtml;
 
-  // Reset aceite
+  // ── Reset aceite ──────────────────────────────────
   document.getElementById('checkAceite').checked = false;
   document.getElementById('btnIrPagamento').disabled = true;
+  // Fecha cláusulas se estavam abertas
+  var clausulas = document.getElementById('orcClausulas');
+  if (clausulas) clausulas.style.display = 'none';
+  var togBtn = document.querySelector('.orc-clausulas-toggle');
+  if (togBtn) togBtn.textContent = '📋 Ver cláusulas e termos do contrato ▼';
 
-  // Troca de step
+  // ── Troca de step ─────────────────────────────────
   document.getElementById('orcStep2').style.display = 'none';
   document.getElementById('orcStep3').style.display = 'none';
   document.getElementById('orcStep4').style.display = 'flex';
