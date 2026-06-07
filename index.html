@@ -1369,14 +1369,123 @@
       </div>
       <div style="display:flex;gap:8px;">
         <button class="orc-submit" style="background:#888;flex:0 0 auto;width:auto;padding:14px 18px;" onclick="voltarStep2()">← Voltar</button>
-        <button class="orc-submit" id="btnConfirmarContrato" onclick="confirmarEGerarContrato()" disabled style="flex:1;">Confirmar e Gerar Contrato</button>
+        <button class="orc-submit" id="btnConfirmarContrato" onclick="confirmarEGerarContrato()" disabled style="flex:1;">Continuar →</button>
       </div>
     </div>
 
+    <!-- STEP 4: Revisão do contrato + aceite -->
+    <div class="orc-step2" id="orcStep4" style="display:none;flex-direction:column;gap:14px;">
+      <div class="orc-contrato-header">
+        <div class="orc-contrato-num">CONTRATO Nº <span id="prevNumContrato">—</span></div>
+        <div class="orc-contrato-sub">Revise as informações antes de prosseguir</div>
+      </div>
+
+      <!-- Resumo financeiro -->
+      <div class="orc-contrato-box" id="prevResumo"></div>
+
+      <!-- Datas -->
+      <div class="orc-contrato-datas" id="prevDatas"></div>
+
+      <!-- Cláusulas colapsáveis -->
+      <button class="orc-clausulas-toggle" onclick="toggleClausulas(this)">
+        📋 Ver cláusulas e termos do contrato ▼
+      </button>
+      <div class="orc-clausulas-lista" id="orcClausulas" style="display:none;">
+        <p class="orc-clausula-titulo">•IMPORTANTE•</p>
+        <p class="orc-clausula">● Não realocamos objetos, deixe tudo o mais livre possível, recolha mobilias, eletros, loucas, etc. Não é nossa responsabilidade.</p>
+        <p class="orc-clausula">● Não nos responsabilizamos caso terceiros danifiquem qualquer produto adquirido, durante ou após instalação.</p>
+        <p class="orc-clausula">● A fórmula de quebra de instalação é aproximada, e muda de acordo com a arquitetura e forma de instalação. Material extra é cobrado a parte. A quantia de compra é uma sugestão.</p>
+        <p class="orc-clausula">● Manta não corrigem contrapiso, em caso de desnivelamento, deve ser providenciado correção, ou aceitar o resultado final.</p>
+        <p class="orc-clausula">● Não nos responsabilizamos por canos, dutos, tubulações, fiações etc danificados durante instalação sem devida orientação de planta arquitetônica correta.</p>
+        <p class="orc-clausula">● Custos por reparos em caso de umidade não evidente, são de responsabilidade do cliente, tanto isolamento da umidade, quanto conserto e substituição do produto danificado.</p>
+        <p class="orc-clausula">● Não executamos instalação em ambientes com poeira ou detritos de reforma. Será feito reagendamento com valor de R$250,00. Conforme disponibilidade na lista de obras Decorcom.</p>
+        <p class="orc-clausula">● Não fazemos instalação com prestadores simultâneos, e não é nossa responsabilidade caso terceiro danifique o produto.</p>
+        <p class="orc-clausula">● O cliente pode mudar data de instalação 24 horas antes, sem custo. Fora deste prazo é cobrado R$250,00 para retorno da equipe.</p>
+        <p class="orc-clausula">● Cortes de porta são imprevisíveis. Identificada a necessidade durante instalação, será cobrado R$45,00 uni. Adaptações por marcenaria, cerâmicas, granitos, etc, serão cobradas conforme complexidade.</p>
+        <p class="orc-clausula">● O cliente está ciente que troca de datas de entrega e instalação são feitas conforme lista de agendamento, correndo o risco de não ter disponibilidade.</p>
+        <p class="orc-clausula">● Nenhuma fábrica presta garantia do piso, ou instalação caso instalado sem acessório de transição. Todo reparo ou assistência terá custo iniciando em R$350,00.</p>
+        <p class="orc-clausula">● Os valores do contrato se referem à aquisição ou instalação dos produtos listados. Acabamentos extras serão cobrados a parte.</p>
+        <p class="orc-clausula">● O cliente deve prestar acesso facilitado a garagens, elevadores, etc na entrega. Em caso de escadas ou acesso complexo, deve informar para conferência do valor de entrega.</p>
+        <p class="orc-clausula">● Recolhemos e descartamos os entulhos da instalação, ou remoções de piso anterior, apenas se listado na Pag. 01.</p>
+        <p class="orc-clausula">● O cliente deve permitir vistoria após instalação, de segunda a sexta, nos horários entre 8:30 e 17:30.</p>
+        <p class="orc-clausula">● Filmamos e fotografamos todos os trabalhos para garantir que não haja reclamações posteriores.</p>
+        <p class="orc-clausula">● O cliente está ciente que nenhum rodapé em MDF revestido com poliestireno resiste à água ou umidade. Contato contínuo com umidade deforma o material e gera mofo. Isso anula a garantia.</p>
+      </div>
+
+      <!-- Aceite -->
+      <label class="orc-aceite-label">
+        <input type="checkbox" id="checkAceite" onchange="toggleBtnPagamento()">
+        <span>Li e concordo com todos os termos e cláusulas do contrato</span>
+      </label>
+
+      <div style="display:flex;gap:8px;">
+        <button class="orc-submit" style="background:#888;flex:0 0 auto;width:auto;padding:14px 18px;" onclick="voltarParaCalendario()">← Voltar</button>
+        <button class="orc-submit" id="btnIrPagamento" onclick="irParaPagamento()" disabled style="flex:1;">Ir para Pagamento →</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: Pagamento -->
+    <div class="orc-step2" id="orcStep5" style="display:none;flex-direction:column;gap:14px;">
+      <div class="orc-contrato-header">
+        <div class="orc-contrato-num">Pagamento — Contrato Nº <span id="pagNumContrato">—</span></div>
+        <div class="orc-contrato-sub">Escolha a forma de pagamento para ativar seu contrato</div>
+      </div>
+
+      <div class="orc-pag-total-box">
+        <span>TOTAL</span>
+        <strong id="pagTotalValor">R$ 0,00</strong>
+      </div>
+
+      <!-- PIX -->
+      <div class="orc-pag-opcao" id="opcaoPix" onclick="selecionarPagamento('pix')">
+        <div class="orc-pag-opcao-header">
+          <span class="orc-radio-btn" id="radioPix"></span>
+          <div>
+            <strong>PIX (à vista)</strong>
+            <span class="orc-pag-desc">Melhor opção — sem juros</span>
+          </div>
+          <span class="orc-pag-valor-dest" id="pagValorPix"></span>
+        </div>
+        <div class="orc-pix-detalhes" id="pixDetalhes" style="display:none;">
+          <div class="orc-pix-linha">Chave PIX: <strong>34.935.151/0001-53</strong> (CNPJ)</div>
+          <div class="orc-pix-linha">Banco Santander · Ag: 1273 · CC: 13.003.034-7</div>
+          <div class="orc-pix-linha">Favorecido: <strong>Decorcom Comercio de Moveis Planejados</strong></div>
+          <button class="orc-submit orc-btn-pix" onclick="finalizarContrato(event)">
+            ✅ Já paguei — Enviar comprovante via WhatsApp
+          </button>
+        </div>
+      </div>
+
+      <!-- Crédito -->
+      <div class="orc-pag-opcao" id="opcaoCredito" onclick="selecionarPagamento('credito')">
+        <div class="orc-pag-opcao-header">
+          <span class="orc-radio-btn" id="radioCredito"></span>
+          <div>
+            <strong>Cartão de Crédito</strong>
+            <span class="orc-pag-desc">Em até 10x — via link seguro</span>
+          </div>
+          <span class="orc-pag-valor-dest" id="pagValorCredito"></span>
+        </div>
+        <div class="orc-credito-detalhes" id="creditoDetalhes" style="display:none;">
+          <div class="orc-pix-linha">Processado com segurança via <strong>MercadoPago</strong></div>
+          <button class="orc-submit orc-btn-mp" disabled>
+            🔒 Pagar via MercadoPago <span style="font-size:10px;opacity:.7;">(em breve)</span>
+          </button>
+          <p style="font-size:10px;color:#999;margin:4px 0 0;text-align:center;">Integração em configuração — use PIX por enquanto</p>
+        </div>
+      </div>
+
+      <div class="orc-pag-nota">
+        🔒 Após confirmação do pagamento, seu contrato é ativado e você receberá uma cópia em PDF pelo WhatsApp.
+      </div>
+
+      <button class="orc-submit" style="background:#888;" onclick="voltarStep4()">← Voltar</button>
+    </div>
+
     <div class="orc-success" id="orcSuccess" style="display:none;">
-      <div style="font-size:48px;margin-bottom:1rem;">OK</div>
+      <div style="font-size:48px;margin-bottom:1rem;">✅</div>
       <h3 style="color:#31654e;">Contrato gerado!</h3>
-      <p style="color:#777;font-size:13px;">Redirecionando para o WhatsApp da Decorcom.</p>
+      <p style="color:#555;font-size:13px;">Seu contrato em PDF foi baixado.<br>Envie o comprovante pelo WhatsApp para ativar.</p>
     </div>
   </div>
 </div>

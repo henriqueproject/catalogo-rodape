@@ -879,13 +879,15 @@ function iniciarContrato() {
     document.getElementById('orcStep2').style.display = 'none';
     document.getElementById('orcStep3').style.display = 'flex';
   } else {
-    // Sem instalação: vai direto para gerar contrato
+    // Sem instalação: busca número e vai direto para revisão
     var btn = document.getElementById('orcBtnComprar');
     btn.disabled = true;
-    btn.textContent = 'Gerando contrato...';
+    btn.textContent = 'Aguarde...';
     buscarProximoNumeroContrato(function(num) {
       numeroContratoGerado = num;
-      gerarEFinalizarContrato(btn);
+      btn.disabled = false;
+      btn.textContent = 'Comprar e Gerar Contrato';
+      irParaRevisaoContrato();
     });
   }
 }
@@ -1008,25 +1010,28 @@ function selecionarDataInst(dataStr) {
   document.getElementById('btnConfirmarContrato').disabled = false;
 }
 
-// ── Confirmar e gerar (com instalação) ───────────────
+// ── Confirmar data (Step 3) → vai para Step 4 ────────
 function confirmarEGerarContrato() {
   var btn = document.getElementById('btnConfirmarContrato');
   btn.disabled = true;
-  btn.textContent = 'Gerando contrato...';
+  btn.textContent = 'Aguarde...';
   buscarProximoNumeroContrato(function(num) {
     numeroContratoGerado = num;
-    gerarEFinalizarContrato(btn);
+    btn.disabled = false;
+    btn.textContent = 'Continuar →';
+    irParaRevisaoContrato();
   });
 }
 
-// ── Núcleo: monta dados, gera PDF, salva, WhatsApp ───
-function gerarEFinalizarContrato(btn) {
+// ── Monta e exibe Step 4 ─────────────────────────────
+var _dadosContrato = null;
+
+function irParaRevisaoContrato() {
   var nome     = document.getElementById('confNome').value.trim();
   var cpf      = document.getElementById('confCpf').value.trim();
   var endereco = document.getElementById('confEndereco').value.trim();
   var telefone = document.getElementById('confTelefone').value.trim();
 
-  // Textos de entrega / instalação
   var dataEntregaTexto, dataInstTexto, dataInstFimTexto;
   if (comInstalacao) {
     dataEntregaTexto = isUrgente
@@ -1041,11 +1046,10 @@ function gerarEFinalizarContrato(btn) {
     dataEntregaTexto = isUrgente
       ? 'Urgente — vamos agilizar, entraremos em contato combinando.'
       : '3h a 2 dias úteis — entraremos em contato combinando.';
-    dataInstTexto = null;
-    dataInstFimTexto = null;
+    dataInstTexto = null; dataInstFimTexto = null;
   }
 
-  var dados = {
+  _dadosContrato = {
     numeroContrato: numeroContratoGerado,
     nome: nome, cpf: cpf, endereco: endereco, telefone: telefone,
     dataEntregaTexto: dataEntregaTexto,
@@ -1054,12 +1058,104 @@ function gerarEFinalizarContrato(btn) {
     diasInstalacao: diasInstalacaoNecessarios
   };
 
-  // Gera PDF do contrato
+  // Número do contrato
+  document.getElementById('prevNumContrato').textContent = numeroContratoGerado;
+
+  // Resumo financeiro (clona o mapa do orçamento)
+  var mapaEl = document.getElementById('orcMapa');
+  var resumo = document.getElementById('prevResumo');
+  resumo.innerHTML = mapaEl ? mapaEl.innerHTML : '';
+
+  // Datas
+  var datasEl = document.getElementById('prevDatas');
+  var urgClass = isUrgente ? ' urgente' : '';
+  var datasHtml = '<div class="orc-contrato-data-box' + urgClass + '">'
+    + '<div class="orc-contrato-data-label">Entrega</div>'
+    + '<div class="orc-contrato-data-val">' + dataEntregaTexto + '</div></div>';
+  if (dataInstTexto) {
+    var instRange = dataInstTexto + (dataInstFimTexto ? ' a ' + dataInstFimTexto : '');
+    datasHtml += '<div class="orc-contrato-data-box">'
+      + '<div class="orc-contrato-data-label">Instalação (prazo médio)</div>'
+      + '<div class="orc-contrato-data-val">' + instRange + '</div></div>';
+  }
+  datasEl.innerHTML = datasHtml;
+
+  // Reset aceite
+  document.getElementById('checkAceite').checked = false;
+  document.getElementById('btnIrPagamento').disabled = true;
+
+  // Troca de step
+  document.getElementById('orcStep2').style.display = 'none';
+  document.getElementById('orcStep3').style.display = 'none';
+  document.getElementById('orcStep4').style.display = 'flex';
+}
+
+function toggleClausulas(btn) {
+  var lista = document.getElementById('orcClausulas');
+  var aberto = lista.style.display !== 'none';
+  lista.style.display = aberto ? 'none' : 'block';
+  btn.textContent = aberto
+    ? '📋 Ver cláusulas e termos do contrato ▼'
+    : '📋 Ocultar cláusulas ▲';
+}
+
+function toggleBtnPagamento() {
+  var checked = document.getElementById('checkAceite').checked;
+  document.getElementById('btnIrPagamento').disabled = !checked;
+}
+
+function voltarParaCalendario() {
+  document.getElementById('orcStep4').style.display = 'none';
+  if (comInstalacao) {
+    document.getElementById('orcStep3').style.display = 'flex';
+  } else {
+    document.getElementById('orcStep2').style.display = 'flex';
+  }
+}
+
+function voltarStep4() {
+  document.getElementById('orcStep5').style.display = 'none';
+  document.getElementById('orcStep4').style.display = 'flex';
+}
+
+// ── Step 5: tela de pagamento ─────────────────────────
+function irParaPagamento() {
+  document.getElementById('pagNumContrato').textContent = numeroContratoGerado;
+  document.getElementById('pagTotalValor').textContent  = fmt(orcDados.subtotal);
+  document.getElementById('pagValorPix').textContent    = fmt(orcDados.subtotal);
+  document.getElementById('pagValorCredito').textContent = fmt(orcDados.parcela5x) + '/mês (5x)';
+  // Reset seleção
+  document.getElementById('pixDetalhes').style.display     = 'none';
+  document.getElementById('creditoDetalhes').style.display = 'none';
+  document.getElementById('opcaoPix').classList.remove('ativo');
+  document.getElementById('opcaoCredito').classList.remove('ativo');
+  document.getElementById('radioPix').classList.remove('ativo');
+  document.getElementById('radioCredito').classList.remove('ativo');
+
+  document.getElementById('orcStep4').style.display = 'none';
+  document.getElementById('orcStep5').style.display = 'flex';
+}
+
+function selecionarPagamento(tipo) {
+  var isPix = tipo === 'pix';
+  document.getElementById('opcaoPix').classList.toggle('ativo', isPix);
+  document.getElementById('opcaoCredito').classList.toggle('ativo', !isPix);
+  document.getElementById('radioPix').classList.toggle('ativo', isPix);
+  document.getElementById('radioCredito').classList.toggle('ativo', !isPix);
+  document.getElementById('pixDetalhes').style.display     = isPix ? 'flex'  : 'none';
+  document.getElementById('creditoDetalhes').style.display = isPix ? 'none' : 'flex';
+}
+
+// ── Finalizar: gera PDF + salva + WhatsApp ────────────
+function finalizarContrato(e) {
+  if (e) e.stopPropagation();
+  var btnFin = document.querySelector('.orc-btn-pix');
+  if (btnFin) { btnFin.disabled = true; btnFin.textContent = 'Gerando contrato...'; }
+
+  var dados = _dadosContrato;
   gerarContratoPDF(dados, function() {
-    // Salva no Supabase
     salvarContrato(dados);
 
-    // Mensagem WhatsApp
     var urgMsg = isUrgente ? '\n🚨 ENTREGA URGENTE' : '';
     var linhas = [
       '📋 CONTRATO Nº ' + dados.numeroContrato + ' — DECORCOM' + urgMsg, '',
@@ -1070,34 +1166,26 @@ function gerarEFinalizarContrato(btn) {
     if (comInstalacao) linhas.push('Mão de obra: ' + fmt(orcDados.valorInst));
     if (orcDados.qtdAndaresSalvo > 0) linhas.push('Escada (' + orcDados.qtdAndaresSalvo + ' andares): ' + fmt(orcDados.valorEscada));
     if (remocaoAtivo && orcDados.valorRem > 0) linhas.push(orcDados.descRem + ': ' + fmt(orcDados.valorRem));
-    if (silBrancoDisponivel && orcDados.qtdSilBranco > 0) linhas.push(orcDados.qtdSilBranco + 'x Silicone Branco: ' + fmt(orcDados.valSilBranco));
-    linhas.push(orcDados.qtdSilPu40 + 'x Silicone PU40: ' + fmt(orcDados.valSilPu40));
+    if (silBrancoAtivo && orcDados.qtdSilBranco > 0) linhas.push(orcDados.qtdSilBranco + 'x Silicone Branco: ' + fmt(orcDados.valSilBranco));
+    if (silPu40Ativo && orcDados.qtdSilPu40 > 0) linhas.push(orcDados.qtdSilPu40 + 'x Silicone PU40: ' + fmt(orcDados.valSilPu40));
     linhas.push('Entrega: ' + fmt(orcDados.entrega));
     linhas.push('TOTAL PIX: ' + fmt(orcDados.subtotal));
     linhas.push('');
     linhas.push('ENTREGA: ' + dados.dataEntregaTexto);
-    if (dados.dataInstTexto) {
-      linhas.push('INSTALAÇÃO: ' + dados.dataInstTexto + (dados.dataInstFimTexto ? ' a ' + dados.dataInstFimTexto : ''));
-    }
+    if (dados.dataInstTexto) linhas.push('INSTALAÇÃO: ' + dados.dataInstTexto + (dados.dataInstFimTexto ? ' a ' + dados.dataInstFimTexto : ''));
     linhas.push('');
-    linhas.push('DADOS DO CLIENTE');
-    linhas.push('Nome: ' + nome);
-    linhas.push('CPF: ' + cpf);
-    linhas.push('Endereço: ' + endereco);
-    linhas.push('Telefone: ' + telefone);
+    linhas.push('--- Comprovante PIX ---');
+    linhas.push('Por favor, envie o comprovante do PIX para confirmarmos seu pedido.');
+    linhas.push('Chave: 34.935.151/0001-53 (CNPJ Decorcom)');
 
     var msg = encodeURIComponent(linhas.join('\n'));
 
-    document.getElementById('orcStep2').style.display = 'none';
-    document.getElementById('orcStep3').style.display = 'none';
+    document.getElementById('orcStep5').style.display = 'none';
     document.getElementById('orcSuccess').style.display = 'block';
 
     setTimeout(function() {
       fecharOrcamento();
       window.open('https://wa.me/554133198635?text=' + msg, '_blank');
-      if (btn) { btn.disabled = false; btn.textContent = 'Confirmar e Gerar Contrato'; }
-      var btn2 = document.getElementById('orcBtnComprar');
-      if (btn2) { btn2.disabled = false; btn2.textContent = 'Comprar e Gerar Contrato'; }
     }, 1500);
   });
 }
