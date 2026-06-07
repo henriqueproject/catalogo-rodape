@@ -1081,9 +1081,12 @@ function irParaRevisaoContrato() {
   + '<div class="orc-cliente-linha"><strong>Telefone</strong>' + telefone + '</div>'
   + '<div class="orc-cliente-linha"><strong>Data</strong>' + dataAtual + '</div>';
 
-  // ── Resumo financeiro (clone do orcMapa) ──────────
+  // ── Resumo financeiro (clone do orcMapa, sem título) ─
   var mapaEl = document.getElementById('orcMapa');
-  document.getElementById('prevResumo').innerHTML = mapaEl ? mapaEl.innerHTML : '';
+  var prevResumo = document.getElementById('prevResumo');
+  prevResumo.innerHTML = mapaEl ? mapaEl.innerHTML : '';
+  var titulo = prevResumo.querySelector('.orc-mapa-title');
+  if (titulo) titulo.remove();
 
   // ── Formas de pagamento (clone do orcPagamentos) ──
   var pagEl = document.getElementById('orcPagamentos');
