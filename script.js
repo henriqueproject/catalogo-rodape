@@ -1063,9 +1063,15 @@ function irParaRevisaoContrato() {
   var heroOriginal = document.getElementById('orcHeroHeader');
   if (heroBanner && heroOriginal) {
     heroBanner.innerHTML = heroOriginal.outerHTML;
-    // Remove o id do clone para não duplicar
     var cloneHero = heroBanner.querySelector('.orc-hero-header');
-    if (cloneHero) cloneHero.removeAttribute('id');
+    if (cloneHero) {
+      cloneHero.removeAttribute('id');
+      // Adiciona CNPJ centralizado abaixo do endereço
+      var cnpjEl = document.createElement('div');
+      cnpjEl.style.cssText = 'text-align:center;color:rgba(255,255,255,0.82);font-size:11px;font-weight:500;letter-spacing:0.04em;padding:8px 16px 12px;width:100%;';
+      cnpjEl.textContent = 'Decorcom Interiores LTDA  ·  CNPJ 34.935.151/0001-53';
+      cloneHero.appendChild(cnpjEl);
+    }
   }
 
   // ── Número do contrato ────────────────────────────
