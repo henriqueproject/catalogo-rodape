@@ -1119,6 +1119,10 @@ function irParaRevisaoContrato() {
   var togBtn = document.querySelector('.orc-clausulas-toggle');
   if (togBtn) togBtn.textContent = '📋 Ver cláusulas e termos do contrato ▼';
 
+  // ── Título da faixa verde ─────────────────────────
+  document.getElementById('orcHeaderTitle').textContent = 'Revisão do Contrato';
+  document.getElementById('orcHeaderSub').textContent   = 'Confirme os dados e aceite os termos';
+
   // ── Troca de step ─────────────────────────────────
   document.getElementById('orcStep2').style.display = 'none';
   document.getElementById('orcStep3').style.display = 'none';
@@ -1155,6 +1159,8 @@ function voltarStep4() {
 
 // ── Step 5: tela de pagamento ─────────────────────────
 function irParaPagamento() {
+  document.getElementById('orcHeaderTitle').textContent = 'Pagamento';
+  document.getElementById('orcHeaderSub').textContent   = 'Contrato Nº ' + numeroContratoGerado;
   document.getElementById('pagNumContrato').textContent = numeroContratoGerado;
   document.getElementById('pagTotalValor').textContent  = fmt(orcDados.subtotal);
   document.getElementById('pagValorPix').textContent    = fmt(orcDados.subtotal);
