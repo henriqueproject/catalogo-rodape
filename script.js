@@ -1058,7 +1058,7 @@ function irParaRevisaoContrato() {
     diasInstalacao: diasInstalacaoNecessarios
   };
 
-  // ── Banner: clona o hero do orçamento ────────────
+  // ── Banner: clona o hero do orçamento (mesmas margens) ──
   var heroBanner = document.getElementById('step4Banner');
   var heroOriginal = document.getElementById('orcHeroHeader');
   if (heroBanner && heroOriginal) {
@@ -1066,11 +1066,8 @@ function irParaRevisaoContrato() {
     var cloneHero = heroBanner.querySelector('.orc-hero-header');
     if (cloneHero) {
       cloneHero.removeAttribute('id');
-      // Adiciona CNPJ centralizado abaixo do endereço
-      var cnpjEl = document.createElement('div');
-      cnpjEl.style.cssText = 'text-align:center;color:rgba(255,255,255,0.82);font-size:11px;font-weight:500;letter-spacing:0.04em;padding:8px 16px 12px;width:100%;';
-      cnpjEl.textContent = 'Decorcom Interiores LTDA  ·  CNPJ 34.935.151/0001-53';
-      cloneHero.appendChild(cnpjEl);
+      // Aplica border-radius igual ao do orçamento (fica dentro do wrapper com padding)
+      cloneHero.style.borderRadius = '10px';
     }
   }
 

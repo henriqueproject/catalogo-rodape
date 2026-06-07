@@ -1374,12 +1374,15 @@
     </div>
 
     <!-- STEP 4: Revisão do contrato + aceite -->
-    <div class="orc-step2" id="orcStep4" style="display:none;flex-direction:column;gap:0;padding:0;">
+    <div class="orc-step2" id="orcStep4" style="display:none;flex-direction:column;gap:14px;padding:20px 24px;">
 
-      <!-- Banner clonado do orçamento -->
+      <!-- Banner clonado (mesmo tamanho e margens do orçamento) -->
       <div id="step4Banner"></div>
 
-      <div style="display:flex;flex-direction:column;gap:14px;padding:16px;">
+      <!-- Barra informativa Decorcom -->
+      <div class="orc-contrato-info-bar">
+        Decorcom Interiores LTDA &nbsp;·&nbsp; CNPJ 34.935.151/0001-53
+      </div>
 
       <!-- Dados do cliente -->
       <div class="orc-cliente-block" id="prevCliente"></div>
@@ -1435,7 +1438,6 @@
         <button class="orc-submit" id="btnIrPagamento" onclick="irParaPagamento()" disabled style="flex:1;">Ir para Pagamento →</button>
       </div>
 
-      </div><!-- /padding wrapper -->
     </div>
 
     <!-- STEP 5: Pagamento -->
