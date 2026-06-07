@@ -552,6 +552,24 @@ footer p{font-size:12px;color:#555;margin-top:0.5rem;}
 .btn-salvar-orc{background:#327fa4;color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap;}
 .btn-salvar-orc:hover{background:#2567a8;}
 
+/* ── CALENDÁRIO DE INSTALAÇÃO ───────────────────────── */
+.orc-cal-info-box{background:#f0f7ff;border-radius:8px;padding:12px 14px;border-left:3px solid #327fa4;}
+.orc-cal-info-titulo{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;}
+.orc-cal-info-sub{font-size:12px;color:#555;}
+.orc-calendario{background:#fff;border:1px solid #e8e5df;border-radius:10px;padding:14px;}
+.cal-mes-header{text-align:center;font-size:13px;font-weight:600;color:#31654e;margin-bottom:12px;text-transform:capitalize;}
+.cal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
+.cal-dia-label{text-align:center;font-size:10px;font-weight:600;color:#999;padding:4px 0;letter-spacing:0.04em;}
+.cal-dia{text-align:center;padding:9px 4px;border-radius:7px;font-size:12px;font-weight:500;cursor:default;}
+.cal-dia-ativo{background:#f4f4f2;color:#1a1a1a;cursor:pointer;transition:background 0.15s;}
+.cal-dia-ativo:hover{background:#d4ece0;color:#31654e;}
+.cal-dia-selecionado{background:#31654e!important;color:#fff!important;font-weight:700;}
+.cal-dia-inativo{color:#ccc;background:transparent;}
+.cal-dia-vazio{background:transparent;}
+.orc-cal-selecao{background:#e8f5e9;border-radius:8px;padding:12px 14px;border-left:3px solid #31654e;display:flex;flex-direction:column;gap:6px;}
+.orc-cal-selecao strong{color:#31654e;}
+.orc-cal-obs{font-size:10.5px;color:#666;line-height:1.5;}
+
 
 
 

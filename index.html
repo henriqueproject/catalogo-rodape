@@ -1352,7 +1352,24 @@
       </div>
       <div style="display:flex;gap:8px;">
         <button class="orc-submit" style="background:#888;flex:0 0 auto;width:auto;padding:14px 18px;" onclick="voltarStep1()">← Voltar</button>
-        <button class="orc-submit" id="orcBtnComprar" onclick="gerarContrato()" style="flex:1;">Comprar e Gerar Contrato</button>
+        <button class="orc-submit" id="orcBtnComprar" onclick="iniciarContrato()" style="flex:1;">Comprar e Gerar Contrato</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Seleção de data de instalação -->
+    <div class="orc-step2" id="orcStep3" style="display:none;flex-direction:column;gap:14px;">
+      <div class="orc-cal-info-box">
+        <div class="orc-cal-info-titulo">📅 Selecione a data de início da instalação</div>
+        <div class="orc-cal-info-sub">Prazo estimado: <strong id="calDiasLabel">1 dia</strong> útil(is)</div>
+      </div>
+      <div class="orc-calendario" id="orcCalendario"></div>
+      <div class="orc-cal-selecao" id="calSelecaoInfo" style="display:none;">
+        <span>📅 Prazo médio: <strong id="calDataRange"></strong></span>
+        <span class="orc-cal-obs">O tempo de instalação varia conforme a acessibilidade, configuração da planta do imóvel, condição de habitação, necessidade de remoção ou correção de alguma imperfeição do imóvel.</span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="orc-submit" style="background:#888;flex:0 0 auto;width:auto;padding:14px 18px;" onclick="voltarStep2()">← Voltar</button>
+        <button class="orc-submit" id="btnConfirmarContrato" onclick="confirmarEGerarContrato()" disabled style="flex:1;">Confirmar e Gerar Contrato</button>
       </div>
     </div>
 
