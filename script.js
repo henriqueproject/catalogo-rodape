@@ -338,11 +338,9 @@ function salvarOrcamentoPDF() {
 
     doc.setFontSize(8.5);
     doc.setTextColor(50, 127, 164);
-    doc.text('Credito 5x via link', M + 5, y + 22);
-    doc.text(fmt(orcDados.parcela5x) + '/mes', M + CW - 5, y + 22, { align: 'right' });
-    doc.text('Credito 10x presencial (loja)', M + 5, y + 29);
-    doc.text(fmt(orcDados.parcela10x) + '/mes', M + CW - 5, y + 29, { align: 'right' });
-    y += 37;
+    doc.text('Credito 10x presencial (loja)', M + 5, y + 22);
+    doc.text(fmt(orcDados.parcela10x) + '/mes', M + CW - 5, y + 22, { align: 'right' });
+    y += 30;
 
     // ── PRAZO DE ENTREGA ──────────────────────────────
     doc.setFillColor(232, 245, 233);
@@ -514,7 +512,6 @@ function recalcularMapa() {
     pags.innerHTML = ''
       + '<div class="orc-pag-title">Formas de Pagamento</div>'
       + '<div class="orc-pag-linha orc-pag-pix"><span>PIX (à vista)</span><span>' + fmt(subtotal) + '</span></div>'
-      + '<div class="orc-pag-linha orc-pag-cred"><span>Crédito 5x via link</span><span>' + fmt(parcela5x) + '/mês</span></div>'
       + '<div class="orc-pag-linha orc-pag-cred"><span>Crédito 10x presencial (loja)</span><span>' + fmt(parcela10x) + '/mês</span></div>';
   }
 }
@@ -542,8 +539,8 @@ function renderLinhaSiliconeTagged(tipo, qtd, val) {
   if (tipo === 'branco' && !silBrancoDisponivel) return '';
   var ativo = tipo === 'branco' ? silBrancoAtivo : silPu40Ativo;
   var label = tipo === 'branco'
-    ? qtd + 'x Silicone Branco R$19,99'
-    : qtd + 'x Silicone PU40 (Cola) R$21,99';
+    ? qtd + 'x Silicone Branco R$19,99 uni'
+    : qtd + 'x Silicone PU40 (Cola) R$21,99 uni';
 
   // Com instalação: sem opção de remover — silicones são obrigatórios
   if (comInstalacao) {
@@ -739,11 +736,11 @@ function visualizarOrcamento() {
 
   var linhas = '';
   linhas += '<div class="orc-mapa-title">Orçamento Decorcom</div>';
-  linhas += '<div class="orc-mapa-linha"><span class="desc">' + fmtN(metrosComprar) + 'm ' + orcProduto.nome + ' ' + orcProduto.detalhe + '</span><span class="val">' + fmt(valorProdutos) + '</span></div>';
+  linhas += '<div class="orc-mapa-linha"><span class="desc">' + fmtN(metrosComprar) + 'm ' + orcProduto.nome + ' ' + orcProduto.detalhe + ' R$' + fmtN(precoPorMetro) + 'm</span><span class="val">' + fmt(valorProdutos) + '</span></div>';
   if (comInstalacao) {
     var descInst = instMinimo
       ? 'Mão de Obra — taxa mínima'
-      : fmtN(metrosComprar) + 'm Mão de Obra R$' + fmtN(precoInst) + '/m';
+      : fmtN(metrosComprar) + 'm Mão de Obra R$' + fmtN(precoInst) + 'm';
     linhas += '<div class="orc-mapa-linha"><span class="desc">' + descInst + '</span><span class="val">' + fmt(valorInst) + '</span></div>';
   }
   if (valorRemocao > 0) {
@@ -762,7 +759,6 @@ function visualizarOrcamento() {
   var pags = '';
   pags += '<div class="orc-pag-title">Formas de Pagamento</div>';
   pags += '<div class="orc-pag-linha orc-pag-pix"><span>PIX (à vista)</span><span>' + fmt(subtotal) + '</span></div>';
-  pags += '<div class="orc-pag-linha orc-pag-cred"><span>Crédito 5x via link</span><span>' + fmt(parcela5x) + '/mês</span></div>';
   pags += '<div class="orc-pag-linha orc-pag-cred"><span>Crédito 10x presencial (loja)</span><span>' + fmt(parcela10x) + '/mês</span></div>';
   document.getElementById('orcPagamentos').innerHTML = pags;
 
@@ -1076,13 +1072,11 @@ function irParaRevisaoContrato() {
 
   // ── Dados do cliente ──────────────────────────────
   var clienteEl = document.getElementById('prevCliente');
-  var dataAtual = new Date().toLocaleDateString('pt-BR');
   clienteEl.innerHTML =
     '<div class="orc-cliente-linha"><strong>Cliente</strong>' + nome + '</div>'
   + '<div class="orc-cliente-linha"><strong>CPF/CNPJ</strong>' + cpf + '</div>'
   + '<div class="orc-cliente-linha"><strong>Endereço</strong>' + endereco + '</div>'
-  + '<div class="orc-cliente-linha"><strong>Telefone</strong>' + telefone + '</div>'
-  + '<div class="orc-cliente-linha"><strong>Data</strong>' + dataAtual + '</div>';
+  + '<div class="orc-cliente-linha"><strong>Telefone</strong>' + telefone + '</div>';
 
   // ── Resumo financeiro (clone do orcMapa, sem título) ─
   var mapaEl = document.getElementById('orcMapa');
@@ -1497,7 +1491,7 @@ function gerarContratoPDF(dados, onDone) {
     addItemTabela(fmtN(metros)+'m', orcProduto.nome + ' ' + orcProduto.detalhe, orcDados.precoPorMetro, orcDados.valorProdutos);
     if (comInstalacao) {
       var instMin = (metros * orcDados.precoInst) < MIN_MAO_DE_OBRA;
-      addItemTabela(fmtN(metros)+'m', 'Mão de Obra' + (instMin?' (taxa mínima)':'') + ' R$'+fmtN(orcDados.precoInst)+'/m', orcDados.precoInst, orcDados.valorInst);
+      addItemTabela(fmtN(metros)+'m', 'Mão de Obra' + (instMin?' (taxa mínima)':'') + ' R$'+fmtN(orcDados.precoInst)+'m', orcDados.precoInst, orcDados.valorInst);
     }
     if (orcDados.qtdAndaresSalvo > 0) {
       addItemTabela(orcDados.qtdAndaresSalvo+'x', 'Mão de obra escada R$520,00', 520, orcDados.valorEscada);
