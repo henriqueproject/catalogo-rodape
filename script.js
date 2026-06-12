@@ -577,9 +577,12 @@ function abrirOrcamento(btn) {
   silBrancoAtivo = silBrancoDisponivel;
   silPu40Ativo = true;
   remocaoAtivo = true;
-  orcProduto = {nome: nome, detalhe: detalhe, preco: preco, alt: alt};
+  var imgSrc = card.querySelector('img') ? card.querySelector('img').src : '';
+  orcProduto = {nome: nome, detalhe: detalhe, preco: preco, alt: alt, img: imgSrc};
   document.getElementById('orcProdutoNome').textContent = nome;
   document.getElementById('orcProdutoDetalhe').textContent = detalhe;
+  var orcImg = document.getElementById('orcProdutoImg');
+  if (imgSrc) { orcImg.src = imgSrc; orcImg.style.display = 'block'; } else { orcImg.style.display = 'none'; }
   document.getElementById('orcMetragem').value = '';
   document.getElementById('orcCalc').classList.remove('show');
   document.getElementById('orcStep1').style.display = 'flex';
